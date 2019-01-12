@@ -2,8 +2,9 @@
 
 ##### config #####
 
-BOOST_VER=1_69_0						# boost version
+CPU_ARCH=x64							# Win32 or x64
 PLATFORM="Visual Studio 15 2017 Win64"	# target platform
+BOOST_VER=1_69_0						# boost version
 
 # path to MSBuild.exe
 export PATH=$PATH:"/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin"
@@ -63,4 +64,9 @@ echo "##### build #####"
 
 CXXFLAGS="/MP /FS" CFLAGS="/MP /FS" \
 ../cmake-3.13.2-win64-x64/bin/cmake -G "$PLATFORM" -DBOOST_ROOT=`cygpath -w $PWD`/boost_${BOOST_VER}/..
-nice -n 10 MsBuild.exe ALL_BUILD.vcxproj /t:build
+
+for config in Release Debug; do
+	nice -n 10 MsBuild.exe ALL_BUILD.vcxproj /t:build /p:Configuration=$config
+	mkdir -p lib/$CPU_ARCH.$config
+	mv lib/*.* lib/$CPU_ARCH.$config
+done
